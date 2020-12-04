@@ -1,11 +1,11 @@
-miModulo.controller("facturaPlistController", [
+miModulo.controller("carritoxproductoPlistController", [
     "$scope",
     "auth",
     "$location",
     "ajaxService",
     "$routeParams",
     function ($scope, auth, $location, ajaxService, $routeParams) {
-        $scope.controller = "facturaPlistController";
+        $scope.controller = "carritoxproductoPlistController";
         if (auth.data.status == 200) {
             $scope.datosDeSesion = auth.data;
         } else {
@@ -13,14 +13,15 @@ miModulo.controller("facturaPlistController", [
         }
         $scope.operationIcon = "fas fa-edit";
         $scope.operationName = "Listado de ";
-        $scope.entityName = "factura";
-        $scope.entityIcon = "fas fa-file-invoice-dollar";
+        $scope.entityName = "carrito";
+        $scope.entityIcon = "fas fa-cash-register";
 
         $scope.status = {};
         $scope.status.success = "";
         $scope.status.error = "";
 
         $scope.neighbourhood = 2;
+        $scope.producto = $routeParams.producto;
 
         if ($routeParams.page == undefined) {
             $scope.page = 1;
@@ -46,7 +47,7 @@ miModulo.controller("facturaPlistController", [
             $scope.orderDirection = $routeParams.orderdirection;
         }
 
-        ajaxService.ajaxPlist($scope.entityName, $scope.page, $scope.rpp, $scope.orderField, $scope.orderDirection).then(function (response) {
+        ajaxService.ajaxPlistx($scope.entityName, $scope.page, $scope.rpp, $scope.orderField, $scope.orderDirection, "producto", $scope.producto).then(function (response) {
             $scope.entities = response.data;
             $scope.pages = response.data.totalPages;
             paginacion();
@@ -69,27 +70,7 @@ miModulo.controller("facturaPlistController", [
             }
         }
 
-        $scope.printFactura = function (id) {
-            // pedir los datos de la factura -> rafa
-            ajaxService.ajaxGet($scope.entityName, id).then(function (response) {
-                $scope.facturaEntity = response.data;
-                // pedir las compras de la factura ->rafa
-                ajaxService.ajaxPlist("compra", "factura", id).then(function (response) {
-                    $scope.compraEntities = response.data;
-                    // crear el pdf ->rafa
-                    var doc = new jsPDF();
-                    //var doc = new jsPDF('p','pt','a4');
-                    // rellenar el pdf ->alumno/a           
-                    doc.text($scope.facturaEntity.fecha, 35, 25);                    
-                    // mostrar el pdf ->rafa
-                    doc.save('Factura' + Math.floor(Math.random() * 100000))
-                }).catch(function (error) {
-                    $scope.status.error = "ERROR: Las compras de la " + $scope.entityName + " con id " + $scope.id + " NO se ha podido leer.";
-                });
-            }).catch(function (error) {
-                $scope.status.error = "ERROR: La " + $scope.entityName + " con id " + $scope.id + " NO se ha podido leer.";
-            });
-        }
+
 
 
     }])

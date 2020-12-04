@@ -44,26 +44,46 @@
                         <a href="{{entityName}}/plist/{{page}}/{{rpp}}/id/desc"><i class="fas fa-arrow-down"></i></a>
                     </th>
                     <th class="text-center">
-                        usuario<br>
-                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/usuario/asc"><i class="fas fa-arrow-up"></i></a>
-                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/usuario/desc"><i
+                        código<br>
+                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/codigo/asc"><i class="fas fa-arrow-up"></i></a>
+                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/codigo/desc"><i
                                 class="fas fa-arrow-down"></i></a>
                     </th>
                     <th class="text-center">
-                        fecha<br>
-                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/fecha/asc"><i class="fas fa-arrow-up"></i></a>
-                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/fecha/desc"><i class="fas fa-arrow-down"></i></a>
-                    </th>
-                    <th class="text-center">
-                        iva<br>
-                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/iva/asc"><i class="fas fa-arrow-up"></i></a>
-                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/iva/desc"><i class="fas fa-arrow-down"></i></a>
-                    </th>
-                    <th class="text-center">
-                        pagado<br>
-                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/pagado/asc"><i class="fas fa-arrow-up"></i></a>
-                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/pagado/desc"><i
+                        nombre<br>
+                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/nombre/asc"><i class="fas fa-arrow-up"></i></a>
+                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/nombre/desc"><i
                                 class="fas fa-arrow-down"></i></a>
+                    </th>
+                    <th class="text-center">
+                        tipo<br>
+                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/tipoproducto/asc"><i
+                                class="fas fa-arrow-up"></i></a>
+                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/tipoproducto/desc"><i
+                                class="fas fa-arrow-down"></i></a>
+                    </th>
+                    <th class="text-center">
+                        existencias<br>
+                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/existencias/asc"><i
+                                class="fas fa-arrow-up"></i></a>
+                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/existencias/desc"><i
+                                class="fas fa-arrow-down"></i></a>
+                    </th>
+                    <th class="text-center">
+                        precio<br>
+                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/precio/asc"><i class="fas fa-arrow-up"></i></a>
+                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/precio/desc"><i
+                                class="fas fa-arrow-down"></i></a>
+                    </th>
+                    <th class="text-center">
+                        descuento<br>
+                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/descuento/asc"><i
+                                class="fas fa-arrow-up"></i></a>
+                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/descuento/desc"><i
+                                class="fas fa-arrow-down"></i></a>
+                    </th>
+                    <th class="text-center">
+                        imagen<br>
                     </th>
                     <th class="text-center">
                         compras<br>
@@ -72,18 +92,26 @@
                                 class="fas fa-arrow-down"></i></a>
                     </th>
                     <th class="text-center">
+                        carritos<br>
+                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/carritos/asc"><i class="fas fa-arrow-up"></i></a>
+                        <a href="{{entityName}}/plist/{{page}}/{{rpp}}/carritos/desc"><i
+                                class="fas fa-arrow-down"></i></a>
+                    </th>
+                    <th class="text-center">
                         herramientas
                     </th>
                 </tr>
                 <tr ng-repeat="fila in entities.content">
                     <td>{{fila.id}}</td>
-                    <td class="text-left font-weight-bold"><a
-                            href="usuario/view/{{fila.usuario.id}}">{{fila.usuario.nombre}} {{fila.usuario.apellido1}}
-                            {{fila.usuario.apellido2}} </a></td>
-                    <td class="text-right">{{fila.fecha}}</td>
-                    <td class="text-right">{{fila.iva}}</td>
-                    <td class="text-right">{{fila.pagado}}</td>
-                    <td class="text-right"><a href="compra/{{entityName}}////{{fila.id}} ">{{fila.compras}}</a></td>
+                    <td class="text-left font-weight-bold">{{fila.codigo}} </td>
+                    <td>{{fila.nombre}}</td>
+                    <td><a href="tipoproducto/view/{{fila.tipoproducto.id}}">{{fila.tipoproducto.nombre}}</a></td>
+                    <td class="text-right">{{fila.existencias}}</td>
+                    <td class="text-right">{{fila.precio}}</td>
+                    <td class="text-center">{{fila.descuento}}%</td>
+                    <td class="text-center"><img src="http://localhost:8082/file/{{fila.imagen}}" height="50" /></td>
+                    <td class="text-center"><a href="compra/{{entityName}}////{{fila.id}} ">{{fila.compras}}</a></td>
+                    <td class="text-center">{{fila.carritos}}</td>
                     <td>
                         <div class="row">
                             <div class="col-md-12 text-center">
@@ -94,8 +122,6 @@
                                             class="fas fa-edit"></i></a>
                                     <a class="btn btn-danger" href="{{entityName}}/remove/{{fila.id}}"><i
                                             class="far fa-times"></i></a>
-                                    <button class="btn btn-warning" ng-click="printFactura(fila.id)"><i
-                                            class="far fa-print"></i></button>
                                 </div>
                             </div>
                         </div>
