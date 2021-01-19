@@ -1,20 +1,18 @@
 miModulo.controller("carritoxusuarioPlistController", [
-    "$scope",
-    "auth",
-    "$location",
-    "ajaxService",
-    "$routeParams",
-    function ($scope, auth, $location, ajaxService, $routeParams) {
-        $scope.controller = "carritoxusuarioPlistController";
+    "$scope", "auth", "$location", "ajaxService", "$routeParams", "iconService", "titleService",
+    function ($scope, auth, $location, ajaxService, $routeParams, iconService, titleService) {
+
         if (auth.data.status == 200) {
             $scope.datosDeSesion = auth.data;
         } else {
             $location.path("/home");
         }
-        $scope.operationIcon = "fas fa-edit";
-        $scope.operationName = "Listado de ";
-        $scope.entityName = "usuario";
-        $scope.entityIcon = "fas fa-user";
+
+        $scope.operation = "plist";
+        $scope.entity = "compra";
+        $scope.subEntity = "usuario";
+        $scope.iconService = iconService;
+        $scope.titleService = titleService;
 
         $scope.status = {};
         $scope.status.success = "";
@@ -50,6 +48,7 @@ miModulo.controller("carritoxusuarioPlistController", [
         ajaxService.ajaxPlistx($scope.entityName, $scope.page, $scope.rpp, $scope.orderField, $scope.orderDirection, "usuario", $scope.usuario).then(function (response) {
             $scope.entities = response.data;
             $scope.pages = response.data.totalPages;
+            $scope.registers = response.data.totalElements;
             paginacion();
         }).catch(function (error) {
             $scope.status.error = "ERROR: El " + $scope.entityName + " con id " + $scope.id + " NO se ha podido leer.";

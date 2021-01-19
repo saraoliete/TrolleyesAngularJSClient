@@ -3,28 +3,31 @@ miModulo.controller("tipoproductoNewController", [
     "auth",
     "$location",
     "ajaxService",
-    function ($scope, auth, $location, ajaxService) {
+    "iconService",
+    "titleService",
+    function ($scope, auth, $location, ajaxService, iconService, titleService) {
         $scope.controller = "tipoproductoNewController";
         if (auth.data.status == 200) {
             $scope.datosDeSesion = auth.data;
         } else {
             $location.path("/home");
         }
-        $scope.operationIcon = "fas fa-plus";
-        $scope.operationName = "Alta de ";
-        $scope.entityName = "tipoproducto";
-        $scope.entityIcon = "fas fa-cubes";
+
+        $scope.operation = "new";
+        $scope.entity = "tipoproducto";
+        $scope.iconService = iconService;
+        $scope.titleService = titleService;
 
         $scope.status = {};
         $scope.status.success = "";
         $scope.status.error = "";
 
         $scope.save = function () {
-            var datos = JSON.stringify({ nombre: $scope.entity.nombre });
-            ajaxService.ajaxNew($scope.entityName, datos).then(function (response) {
-                $scope.status.success = "El " + $scope.entityName + " " + $scope.entity.nombre + " ha sido guardado."
+            var datos = JSON.stringify({ nombre: $scope.entityData.nombre });
+            ajaxService.ajaxNew($scope.entity, datos).then(function (response) {
+                $scope.status.success = "El " + $scope.entity + " " + $scope.entityData.nombre + " ha sido guardado."
             }).catch(function (error) {
-                $scope.status.error = "ERROR: El " + $scope.entityName + " con id " + $scope.id + " NO se ha podido leer.";
+                $scope.status.error = "ERROR: El " + $scope.entity + " con id " + $scope.id + " NO se ha podido leer.";
             });
         }
 

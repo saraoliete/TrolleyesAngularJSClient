@@ -1,64 +1,67 @@
 miModulo.component('usuarioselection', {
   templateUrl: 'app/usuario/selection.html',
   bindings: {
-    obj: '='
+    obj: '=',
+    form: '='
   },
-  //controllerAs: 'c',
+  controllerAs: 'c',
   controller: addModalVarController
 });
 
-function addModalVarController($scope, ajaxService) {
+function addModalVarController(ajaxService, iconService, titleService, regexService, commonService) {
   var self = this;
 
-  $scope.entityName = "usuario";
+  self.entity = "usuario";
+  self.iconService = iconService;
+  self.titleService = titleService;
+  self.regexService = regexService;
 
-  $scope.status = {};
-  $scope.status.success = "";
-  $scope.status.error = "";
+  self.status = { success: "", error: "" };
 
-  $scope.neighbourhood = 2;
+  self.neighbourhood = 2;
 
-  $scope.page = 1;
-  $scope.rpp = 10;
-  $scope.orderField = "id";
-  $scope.orderDirection = "asc";
+  self.page = 1;
+  self.rpp = 10;
+  self.orderField = "id";
+  self.orderDirection = "asc";
 
-  $scope.recarga = function (page, rpp, orderField, orderDirection) {
-    ajaxService.ajaxPlist($scope.entityName, page, rpp, orderField, orderDirection).then(function (response) {
-      $scope.entities = response.data;
-      $scope.pages = response.data.totalPages;
-      $scope.page = page;
-      $scope.rpp = rpp;
-      $scope.orderField = orderField;
-      $scope.orderDirection = orderDirection;
-      paginacion();
-    }).catch(function (error) {
-      $scope.status.error = "ERROR: Los " + $scope.entityName + " con id " + $scope.id + " NO se ha podido leer.";
-    });
-  }
-
-  function paginacion() {
-    $scope.botonera = [];
-    for (i = 1; i <= $scope.pages; i++) {
-      if (i == 1) {
-        $scope.botonera.push(i);
-      } else if (i > ($scope.page - $scope.neighbourhood) && i < ($scope.page + $scope.neighbourhood)) {
-        $scope.botonera.push(i);
-      } else if (i == $scope.pages) {
-        $scope.botonera.push(i);
-      } else if (i == ($scope.page - $scope.neighbourhood) || i == ($scope.page + $scope.neighbourhood)) {
-        $scope.botonera.push('...');
+  self.recarga = function (page, rpp, orderField, orderDirection) {
+    ajaxService.ajaxPlist(self.entity, page, rpp, orderField, orderDirection).then(function (response) {
+      self.page = page;
+      self.rpp = rpp;
+      self.orderField = orderField;
+      self.orderDirection = orderDirection;
+      if (self.page > response.data.totalPages) {
+        self.page = response.data.totalPages;
+        ajaxService.ajaxPlist(self.entity, self.page, rpp, orderField, orderDirection).then(function (response) {
+          self.entitiesData = response.data.content;
+          self.pages = response.data.totalPages;
+          self.registers = response.data.totalElements;
+          self.botonera = commonService.pagination(self.pages, self.page);
+        }).catch(function (error) {
+          self.status.error = "Error de comunicación con el servidor.";
+        });
+      } else {
+        self.entitiesData = response.data.content;
+        self.pages = response.data.totalPages;
+        self.registers = response.data.totalElements;
+        self.botonera = commonService.pagination(self.pages, self.page);
       }
-    }
-  }
-
-  $scope.seleccionar = function (identificator) {
-    ajaxService.ajaxGet($scope.entityName, identificator).then(function (response) {
-      self.obj = response.data;
     }).catch(function (error) {
-      $scope.status.error = "ERROR: El " + $scope.entityName + " con id " + $scope.id + " NO se ha podido leer.";
+      self.status.error = "Error de comunicación con el servidor.";
     });
   }
 
-  $scope.recarga($scope.page, $scope.rpp, $scope.orderField, $scope.orderDirection);
+  self.seleccionar = function (identificator) {
+    ajaxService.ajaxGet(self.entity, identificator).then(function (response) {
+      self.obj = response.data;
+      self.form.inputId.$setDirty();
+    }).catch(function (error) {
+      self.obj = { id: "", nombre: "???" };
+      self.form.inputId.$setInvalid();
+    });
+  }
+
+  self.recarga(self.page, self.rpp, self.orderField, self.orderDirection);
+
 }

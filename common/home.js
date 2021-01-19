@@ -1,78 +1,58 @@
 miModulo.controller("HomeController", [
-    "$scope",
-    "auth",
-    "$location",
-    "ajaxService",
-    "$routeParams",
-    function ($scope, auth, $location, ajaxService, $routeParams) {
-        $scope.controller = "HomeController";
+    "$scope", "auth", "$location", "ajaxService", "$routeParams", "iconService", "titleService", "configService", "commonService",
+    function ($scope, auth, $location, ajaxService, $routeParams, iconService, titleService, configService, commonService) {
+
         if (auth.data.status == 200) {
             $scope.datosDeSesion = auth.data;
-        } else {
-            $location.path("/home");
-        }
-        $scope.operationIcon = "fas fa-home";
-        $scope.operationName = "Bienvenido";
-        $scope.entityName = "producto";
-        $scope.entityHome = "home";
-        $scope.entityIcon = "fas fa-shopping-cart";
-
-        $scope.status = {};
-        $scope.status.success = "";
-        $scope.status.error = "";
-
-        $scope.neighbourhood = 2;
-
-        if ($routeParams.page == undefined) {
-            $scope.page = 1;
-        } else {
-            $scope.page = parseInt($routeParams.page);
         }
 
-        if ($routeParams.rpp == undefined) {
-            $scope.rpp = 10;
-        } else {
-            $scope.rpp = parseInt($routeParams.rpp);
+        $scope.operation = "home";
+        $scope.entity = "system";
+        $scope.iconService = iconService;
+        $scope.titleService = titleService;
+        $scope.configService = configService;
+
+        $scope.status = { success: "", error: "" };
+
+        $scope.page = commonService.getPage($routeParams.page);
+        $scope.rpp = commonService.getRpp($routeParams.rpp);
+        $scope.orderField = commonService.getOrderfield($routeParams.orderfield);
+        $scope.orderDirection = commonService.getOrderdirection($routeParams.orderdirection);
+        $scope.filter = commonService.getFilter($routeParams.filter);
+
+        $scope.doFilter = function () {
+            $location.path("/home/" + $scope.page + "/" + $scope.rpp + "/" + $scope.orderField + "/" + $scope.orderDirection + "/" + $scope.filter);
         }
 
-        if ($routeParams.orderfield == undefined) {
-            $scope.orderField = "id";
-        } else {
-            $scope.orderField = $routeParams.orderfield;
-        }
-
-        if ($routeParams.orderdirection == undefined) {
-            $scope.orderDirection = "asc";
-        } else {
-            $scope.orderDirection = $routeParams.orderdirection;
-        }
-
-        ajaxService.ajaxPlist($scope.entityName, $scope.page, $scope.rpp, $scope.orderField, $scope.orderDirection).then(function (response) {
-            $scope.entities = response.data;
-            $scope.pages = response.data.totalPages;
-            paginacion();
+        ajaxService.ajaxPlist("producto", $scope.page, $scope.rpp, $scope.orderField, $scope.orderDirection, $scope.filter).then(function (response) {
+            if ($scope.page > response.data.totalPages) {
+                $scope.page = response.data.totalPages;
+                ajaxService.ajaxPlist("producto", $scope.page, $scope.rpp, $scope.orderField, $scope.orderDirection, $scope.filter).then(function (response) {
+                    $scope.entitiesData = response.data;
+                    $scope.pages = response.data.totalPages;
+                    $scope.registers = response.data.totalElements;
+                    $scope.botonera = commonService.pagination($scope.pages, $scope.page);
+                }).catch(function (error) {
+                    $scope.status.error = "Error de comunicación con el servidor";
+                });
+            } else {
+                $scope.entitiesData = response.data;
+                $scope.pages = response.data.totalPages;
+                $scope.registers = response.data.totalElements;
+                $scope.botonera = commonService.pagination($scope.pages, $scope.page);
+            }
         }).catch(function (error) {
-            $scope.status.error = "ERROR: Los " + $scope.entityName + " con id " + $scope.id + " NO se ha podido leer.";
+            $scope.status.error = "Error de comunicación con el servidor.";
         });
 
-        function paginacion() {
-            $scope.botonera = [];
-            for (i = 1; i <= $scope.pages; i++) {
-                if (i == 1) {
-                    $scope.botonera.push(i);
-                } else if (i > ($scope.page - $scope.neighbourhood) && i < ($scope.page + $scope.neighbourhood)) {
-                    $scope.botonera.push(i);
-                } else if (i == $scope.pages) {
-                    $scope.botonera.push(i);
-                } else if (i == ($scope.page - $scope.neighbourhood) || i == ($scope.page + $scope.neighbourhood)) {
-                    $scope.botonera.push('...');
-                }
-            }
-        }
+
 
         $scope.carritoAdd = function (id_producto) {
             ajaxService.ajaxCarritoAdd(id_producto, 1).then(function (response) {
                 $scope.repuesta = response.data;
+                return ajaxService.ajaxCheck();
+            }).then(function (result) {
+                $scope.datosDeSesion = result;
             }).catch(function (error) {
                 $scope.status.error = "ERROR: No se ha podido añadir el producto " + producto + " al carrito.";
             });

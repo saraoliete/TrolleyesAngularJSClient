@@ -4,17 +4,21 @@ miModulo.controller("productoxtipoproductoPlistController", [
     "$location",
     "ajaxService",
     "$routeParams",
-    function ($scope, auth, $location, ajaxService, $routeParams) {
-        $scope.controller = "productoxtipoproductoPlistController";
+    "iconService",
+    "titleService",
+    function ($scope, auth, $location, ajaxService, $routeParams, iconService, titleService) {
+
         if (auth.data.status == 200) {
             $scope.datosDeSesion = auth.data;
         } else {
             $location.path("/home");
         }
-        $scope.operationIcon = "fas fa-edit";
-        $scope.operationName = "Listado de ";
-        $scope.entityName = "producto";
-        $scope.entityIcon = "fas fa-cash-register";
+
+        $scope.operation = "plist";
+        $scope.entity = "producto";
+        $scope.subEntity = "tipoproducto";
+        $scope.iconService = iconService;
+        $scope.titleService = titleService;
 
         $scope.status = {};
         $scope.status.success = "";
@@ -47,12 +51,13 @@ miModulo.controller("productoxtipoproductoPlistController", [
             $scope.orderDirection = $routeParams.orderdirection;
         }
 
-        ajaxService.ajaxPlistx($scope.entityName, $scope.page, $scope.rpp, $scope.orderField, $scope.orderDirection, "tipoproducto", $scope.tipoproducto).then(function (response) {
+        ajaxService.ajaxPlistx($scope.entity, $scope.page, $scope.rpp, $scope.orderField, $scope.orderDirection, "tipoproducto", $scope.tipoproducto).then(function (response) {
             $scope.entities = response.data;
             $scope.pages = response.data.totalPages;
+            $scope.registers = response.data.totalElements;
             paginacion();
         }).catch(function (error) {
-            $scope.status.error = "ERROR: El " + $scope.entityName + " con id " + $scope.id + " NO se ha podido leer.";
+            $scope.status.error = "ERROR: El " + $scope.entity + " con id " + $scope.id + " NO se ha podido leer.";
         });
 
         function paginacion() {

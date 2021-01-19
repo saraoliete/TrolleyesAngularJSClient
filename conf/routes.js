@@ -18,7 +18,7 @@ miModulo.config([
       }
     });
 
-    $routeProvider.when("/home", {
+    $routeProvider.when("/home/:page?/:rpp?/:orderfield?/:orderdirection?/:filter?", {
       templateUrl: "common/home.html",
       controller: "HomeController",
       resolve: {
@@ -343,7 +343,7 @@ miModulo.config([
     });
 
     $routeProvider.when("/factura/edit/:id", {
-      templateUrl: "app/factura/edit.html",
+      templateUrl: "app/factura/form.html",
       controller: "facturaEditController",
       resolve: {
         auth: function (ajaxService) {
@@ -411,7 +411,7 @@ miModulo.config([
     });
 
     $routeProvider.when("/usuario/edit/:id", {
-      templateUrl: "app/usuario/edit.html",
+      templateUrl: "app/usuario/form.html",
       controller: "usuarioEditController",
       resolve: {
         auth: function (ajaxService) {
@@ -479,7 +479,7 @@ miModulo.config([
     });
 
     $routeProvider.when("/usuario/new/", {
-      templateUrl: "app/usuario/new.html",
+      templateUrl: "app/usuario/form.html",
       controller: "usuarioNewController",
       resolve: {
         auth: function (ajaxService) {
@@ -495,7 +495,7 @@ miModulo.config([
       }
     });
     $routeProvider.when("/factura/new/", {
-      templateUrl: "app/factura/new.html",
+      templateUrl: "app/factura/form.html",
       controller: "facturaNewController",
       resolve: {
         auth: function (ajaxService) {
@@ -561,7 +561,7 @@ miModulo.config([
       }
     });
 
-    $routeProvider.when("/producto/plist/:page?/:rpp?/:orderfield?/:orderdirection?", {
+    $routeProvider.when("/producto/plist/:page?/:rpp?/:orderfield?/:orderdirection?/:filter?", {
       templateUrl: "app/producto/plist.html",
       controller: "productoPlistController",
       resolve: {
@@ -779,7 +779,7 @@ miModulo.config([
       }
     });
 
-    
+
     $routeProvider.when("/compra/factura/:page?/:rpp?/:orderfield?/:orderdirection?/:factura", {
       templateUrl: "app/compra/plistxfactura.html",
       controller: "compraxfacturaPlistController",
@@ -847,6 +847,76 @@ miModulo.config([
       }
     });
 
+    $routeProvider.when("/factura/usuario/:page?/:rpp?/:orderfield?/:orderdirection?/:usuario", {
+      templateUrl: "app/factura/plistxusuario.html",
+      controller: "facturaxusuarioPlistController",
+      resolve: {
+        auth: function (ajaxService) {
+          return ajaxService
+            .ajaxCheck()
+            .then(function (result) {
+              return { data: result };
+            })
+            .catch(function (result) {
+              return { data: result };
+            });
+        }
+      }
+    });
+
+    $routeProvider.when("/reports", {
+      templateUrl: "common/reports.html",
+      controller: "reportsListController",
+      resolve: {
+        auth: function (ajaxService) {
+          return ajaxService
+            .ajaxCheck()
+            .then(function (result) {
+              return { data: result };
+            })
+            .catch(function (result) {
+              return { data: result };
+            });
+        }
+      }
+    });
+
+    $routeProvider.when("/report/i17", {
+      templateUrl: "reports/i17.html",
+      controller: "i17ReportController",
+      resolve: {
+        auth: function (ajaxService) {
+          return ajaxService
+            .ajaxCheck()
+            .then(function (result) {
+              return { data: result };
+            })
+            .catch(function (result) {
+              return { data: result };
+            });
+        }
+      }
+    });
+
+
+    $routeProvider.when("/report/i04", {
+      templateUrl: "reports/i04.html",
+      controller: "i04ReportController",
+      resolve: {
+        auth: function (ajaxService) {
+          return ajaxService
+            .ajaxCheck()
+            .then(function (result) {
+              return { data: result };
+            })
+            .catch(function (result) {
+              return { data: result };
+            });
+        }
+      }
+    });
+
     $routeProvider.otherwise({ redirectTo: "/" });
+
   },
 ]);

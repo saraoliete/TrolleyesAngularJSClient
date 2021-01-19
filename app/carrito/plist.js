@@ -1,20 +1,17 @@
 miModulo.controller("carritoPlistController", [
-    "$scope",
-    "auth",
-    "$location",
-    "ajaxService",
-    "$routeParams",
-    function ($scope, auth, $location, ajaxService, $routeParams) {
-        $scope.controller = "carritoPlistController";
+    "$scope", "auth", "$location", "ajaxService", "$routeParams", "iconService", "titleService",
+    function ($scope, auth, $location, ajaxService, $routeParams, iconService, titleService) {
+
         if (auth.data.status == 200) {
             $scope.datosDeSesion = auth.data;
         } else {
             $location.path("/home");
         }
-        $scope.operationIcon = "fas fa-edit";
-        $scope.operationName = "Listado de ";
-        $scope.entityName = "carrito";
-        $scope.entityIcon = "fas fa-user";
+
+        $scope.operation = "plist";
+        $scope.entity = "carrito";
+        $scope.iconService = iconService;
+        $scope.titleService = titleService;
 
         $scope.status = {};
         $scope.status.success = "";
@@ -46,12 +43,13 @@ miModulo.controller("carritoPlistController", [
             $scope.orderDirection = $routeParams.orderdirection;
         }
 
-        ajaxService.ajaxPlist($scope.entityName, $scope.page, $scope.rpp, $scope.orderField, $scope.orderDirection).then(function (response) {
+        ajaxService.ajaxPlist($scope.entity, $scope.page, $scope.rpp, $scope.orderField, $scope.orderDirection).then(function (response) {
             $scope.entities = response.data;
             $scope.pages = response.data.totalPages;
+            $scope.registers = response.data.totalElements;
             paginacion();
         }).catch(function (error) {
-            $scope.status.error = "ERROR: El " + $scope.entityName + " con id " + $scope.id + " NO se ha podido leer.";
+            $scope.status.error = "ERROR: El " + $scope.entity + " con id " + $scope.id + " NO se ha podido leer.";
         });
 
         function paginacion() {
